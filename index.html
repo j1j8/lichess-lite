@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <style>
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, sans-serif; 
             background: #161512; 
             color: #bababa; 
             display: flex; 
@@ -17,18 +17,14 @@
             height: 100vh; 
             margin: 0; 
         }
-        h2 { color: #fff; margin-bottom: 20px; font-weight: 400; letter-spacing: 1px; }
-        
+        h2 { color: #fff; margin-bottom: 20px; font-weight: 400; }
         #myBoard { 
             width: 400px; 
             max-width: 90vw;
             margin-bottom: 20px; 
             box-shadow: 0 10px 50px rgba(0,0,0,0.6); 
-            border: 2px solid #3d3d3d;
         }
-
         .controls { display: flex; gap: 10px; }
-        
         button { 
             padding: 12px 24px; 
             background: #363432; 
@@ -37,15 +33,9 @@
             border-radius: 4px; 
             cursor: pointer; 
             font-weight: 600;
-            transition: all 0.2s;
         }
-
-        button:hover { 
-            background: #454341; 
-            color: #fff;
-        }
-
-        /* Customize board colors to look more like Lichess */
+        button:hover { background: #454341; color: #fff; }
+        /* Lichess colors */
         .white-1e1d7 { background-color: #f0d9b5 !important; }
         .black-3c85d { background-color: #b58863 !important; }
     </style>
@@ -69,10 +59,7 @@
         var game = new Chess();
 
         function onDragStart (source, piece, position, orientation) {
-            // Do not pick up pieces if the game is over
             if (game.game_over()) return false;
-
-            // Only pick up pieces for the side to move
             if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
                 (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
                 return false;
@@ -80,19 +67,14 @@
         }
 
         function onDrop (source, target) {
-            // See if the move is legal
             var move = game.move({
                 from: source,
                 to: target,
-                promotion: 'q' // Always promote to queen for simplicity
+                promotion: 'q'
             });
-
-            // Illegal move
             if (move === null) return 'snapback';
         }
 
-        // Update the board position after the piece snap
-        // for castling, en passant, pawn promotion
         function onSnapEnd () {
             board.position(game.fen());
         }
@@ -103,8 +85,8 @@
             onDragStart: onDragStart,
             onDrop: onDrop,
             onSnapEnd: onSnapEnd,
-            // FIX: This line fetches the piece images from a public server
-            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+            // NEW IMAGE SOURCE: Using a highly reliable CDN
+            pieceTheme: 'https://raw.githubusercontent.com/jhlywa/chess.js/master/img/chesspieces/wikipedia/{piece}.png'
         };
         
         board = ChessBoard('myBoard', config);
